@@ -1,7 +1,10 @@
-﻿namespace DashboardBackend.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DashboardBackend.Models
 {
     public class Customer
     {
+        [Key]
         public int ID { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

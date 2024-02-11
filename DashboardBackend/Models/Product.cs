@@ -1,7 +1,10 @@
-﻿namespace DashboardBackend.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DashboardBackend.Models
 {
     public class Product
     {
+        [Key] 
         public int ID { get; set; }
         public Category Category { get; set; }
         public Size Size { get; set; }
