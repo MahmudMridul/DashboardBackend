@@ -8,6 +8,9 @@
         public string Address { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
         public CustomerType Type {  get; set; } 
+
+        // One customer can put multiple orders
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
     }
 
     public enum CustomerType
