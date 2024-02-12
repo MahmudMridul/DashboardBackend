@@ -1,8 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using DashboardBackend.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.OpenApi;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DashboardBackend.Models
 {
