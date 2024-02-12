@@ -1,4 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DashboardBackend.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.OpenApi;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DashboardBackend.Models
 {
@@ -10,7 +14,7 @@ namespace DashboardBackend.Models
         public string Email { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
-        public CustomerType Type {  get; set; } 
+        public CustomerType Type { get; set; }
 
         // One customer can put multiple orders
         public ICollection<Order> Orders { get; set; } = new List<Order>();
@@ -19,6 +23,6 @@ namespace DashboardBackend.Models
     public enum CustomerType
     {
         Active,
-        Inactive, 
+        Inactive,
     }
 }

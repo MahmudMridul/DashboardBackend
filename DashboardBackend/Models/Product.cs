@@ -6,6 +6,7 @@ namespace DashboardBackend.Models
     {
         [Key] 
         public int ID { get; set; }
+        public string Name { get; set; } = string.Empty;
         public Category Category { get; set; }
         public Size Size { get; set; }
         public Color Color { get; set; }
