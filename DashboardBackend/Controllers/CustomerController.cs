@@ -2,7 +2,7 @@
 using DashboardBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Client;
+using System.Net;
 
 namespace DashboardBackend.Controllers
 {
@@ -11,43 +11,93 @@ namespace DashboardBackend.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly ApplicationContext _db;
+        private APIResponse _response;
 
         public CustomerController(ApplicationContext db) 
         {
             _db = db;
+            _response = new APIResponse();
         }
+
         // GET: api/<CustomerController>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetCustomers()
         {
-            return await _db.Customers.ToListAsync();
+            try
+            {
+                IEnumerable<Customer> customers = await _db.Customers.ToListAsync();
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Message = "Successfully retrieved all customers";
+                _response.Data = customers;
+                return Ok(_response);
+            }
+            catch (Exception e)
+            {
+                _response.Message = e.Message;
+                return BadRequest(_response);
+            }
         }
 
         // GET api/<CustomerController>/5
         [HttpGet("id/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task< ActionResult< Customer > > GetCustomerByID(int id)
+        public async Task< ActionResult< APIResponse > > GetCustomerByID(int id)
         {
-            Customer? customer = await _db.Customers.FirstOrDefaultAsync(customer => customer.ID == id);
-            if(customer == null)
+            try
             {
-                return NotFound();
+                Customer? customer = await _db.Customers.FirstOrDefaultAsync(customer => customer.ID == id);
+                if (customer == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Message = $"No customer found with ID {id}";
+                    return NotFound(_response);
+                }
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Message = $"Successfully retrieved customer with ID {id}";
+                _response.Data = customer;
+                return Ok(_response);
             }
-            return Ok(customer);
+            catch (Exception e)
+            {
+                _response.Message = e.Message;
+                return BadRequest(_response);
+            }
         }
 
         [HttpGet("name/{name}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomerByName(string name)
+        public async Task<ActionResult< APIResponse > > GetCustomerByName(string name)
         {
-            name = name.ToLower();
-            return await _db.Customers.Where(
-                 customer =>  customer.Name.Contains(name.ToLower())
-            ).ToListAsync();
+            try
+            {
+                name = name.ToLower();
+                IEnumerable<Customer> customers = await _db.Customers.Where(
+                     customer => customer.Name.Contains(name.ToLower())
+                ).ToListAsync();
+
+                if (customers.Count() == 0)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    _response.Message = $"No customer found with name containing {name}";
+                    return NotFound(_response);
+                }
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Message = $"Successfully retrieved customer with name containing {name}";
+                _response.Data = customers;
+                return Ok(_response);
+            }
+            catch (Exception e)
+            {
+                _response.Message = e.Message;
+                return BadRequest(_response);
+            }
         }
 
         //// POST api/<CustomerController>
