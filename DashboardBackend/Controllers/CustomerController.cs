@@ -2,6 +2,7 @@
 using DashboardBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 
 namespace DashboardBackend.Controllers
 {
@@ -17,34 +18,54 @@ namespace DashboardBackend.Controllers
         }
         // GET: api/<CustomerController>
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
         {
             return await _db.Customers.ToListAsync();
         }
 
         // GET api/<CustomerController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("id/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task< ActionResult< Customer > > GetCustomerByID(int id)
         {
-            return "value";
+            Customer? customer = await _db.Customers.FirstOrDefaultAsync(customer => customer.ID == id);
+            if(customer == null)
+            {
+                return NotFound();
+            }
+            return Ok(customer);
         }
 
-        // POST api/<CustomerController>
-        [HttpPost]
-        public void Post([FromBody] string value)
+        [HttpGet("name/{name}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomerByName(string name)
         {
+            name = name.ToLower();
+            return await _db.Customers.Where(
+                 customer =>  customer.Name.Contains(name.ToLower())
+            ).ToListAsync();
         }
 
-        // PUT api/<CustomerController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
+        //// POST api/<CustomerController>
+        //[HttpPost]
+        //public void Post([FromBody] string value)
+        //{
+        //}
 
-        // DELETE api/<CustomerController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        //// PUT api/<CustomerController>/5
+        //[HttpPut("{id}")]
+        //public void Put(int id, [FromBody] string value)
+        //{
+        //}
+
+        //// DELETE api/<CustomerController>/5
+        //[HttpDelete("{id}")]
+        //public void Delete(int id)
+        //{
+        //}
     }
 }
