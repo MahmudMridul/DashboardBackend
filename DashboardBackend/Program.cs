@@ -16,6 +16,16 @@ namespace DashboardBackend
                 options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default"))
             );
 
+            // Add CORS
+            builder.Services.AddCors(option => {
+                option.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin();
+                });
+            });
+
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -31,6 +41,8 @@ namespace DashboardBackend
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowAll");
 
             app.UseAuthorization();
 
