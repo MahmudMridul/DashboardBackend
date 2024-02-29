@@ -6,7 +6,7 @@ using System.Net;
 
 namespace DashboardBackend.Controllers
 {
-    [Route("api/customer")]
+    [Route("api/[controller]")]
     [ApiController]
     public class CustomerController : ControllerBase
     {
