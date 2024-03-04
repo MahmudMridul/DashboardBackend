@@ -42,6 +42,27 @@ namespace DashboardBackend.Controllers
             }
         }
 
+        [HttpGet("totalstock")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> GetTotalStock()
+        {
+            try
+            {
+                int totalStock = await _db.Products.SumAsync((product) => product.Stock );
+                _response.StatusCode = HttpStatusCode.OK;
+                _response.IsSuccess = true;
+                _response.Message = "Successfully retrieved total stock";
+                _response.Data = totalStock;
+                return Ok(_response);
+            }
+            catch (Exception e)
+            {
+                _response.Message = e.Message;
+                return BadRequest(_response);
+            }
+        }
+
         // GET api/<ProductController>/5
         //[HttpGet("{id}")]
         //public string Get(int id)
