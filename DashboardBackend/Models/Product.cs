@@ -14,40 +14,4 @@ namespace DashboardBackend.Models
         public int Price { get; set; }
         public int Stock { get; set; }
     }
-
-    public enum Category
-    {
-        Men,
-        Women, 
-        Children,
-        Sports,
-        Graphic
-    }
-
-    public enum Size
-    {
-        Small,
-        Medium,
-        Large,
-        XLarge,
-        XXLarge
-    }
-
-    public enum Color
-    {
-        Red,
-        Blue,
-        Green,
-        Yellow,
-        Black, 
-        White, 
-    }
-
-    public enum ProductStatus
-    {
-        Low,
-        Medium,
-        Ok
-    }
-
 }
