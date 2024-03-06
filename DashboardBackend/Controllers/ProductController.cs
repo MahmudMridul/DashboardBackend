@@ -70,7 +70,7 @@ namespace DashboardBackend.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<APIResponse>> UpdateStock(ProductStockUpdateDTO productDTO)
         {
-            if (productDTO == null || productDTO.Stock < 0 || productDTO.Price < 0)
+            if (productDTO == null || productDTO.Stock < 0)
             {
                 _response.Message = "Parameters are invalid";
                 _response.StatusCode = HttpStatusCode.BadRequest;
@@ -105,7 +105,9 @@ namespace DashboardBackend.Controllers
                                 else
                                 {
                                     product.Stock = stock;
-                                    product.Price = productDTO.Price;
+                                    if(stock < 5) { product.Status = ProductStatus.Low; }
+                                    else if(stock < 10) { product.Status = ProductStatus.Medium; }
+                                    else if (stock >= 10) { product.Status = ProductStatus.Ok; }
                                     _db.Products.Update(product);
                                 }
                             }
