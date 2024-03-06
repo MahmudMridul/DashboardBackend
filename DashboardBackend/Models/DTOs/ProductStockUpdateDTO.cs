@@ -7,7 +7,6 @@ namespace DashboardBackend.Models.DTOs
         public Size[] Sizes { get; set; } = [];
         public Color[] Colors { get; set; } = [];
         public int Stock { get; set; }
-        public int Price { get; set; }
         public bool IsAdd { get; set; }
     }
 }
