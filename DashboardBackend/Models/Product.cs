@@ -4,8 +4,7 @@ namespace DashboardBackend.Models
 {
     public class Product
     {
-        [Key] 
-        public int ID { get; set; }
+        [Key]
         public string Name { get; set; } = string.Empty;
         public Category Category { get; set; }
         public Size Size { get; set; }
