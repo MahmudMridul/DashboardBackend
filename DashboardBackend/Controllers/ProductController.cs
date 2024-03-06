@@ -1,7 +1,9 @@
 ﻿using DashboardBackend.Data;
 using DashboardBackend.Models;
+using DashboardBackend.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Composition;
 using System.Net;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -59,6 +61,68 @@ namespace DashboardBackend.Controllers
             catch (Exception e)
             {
                 _response.Message = e.Message;
+                return BadRequest(_response);
+            }
+        }
+
+        [HttpPost("stockupdate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> UpdateStock(ProductStockUpdateDTO productDTO)
+        {
+            if (productDTO == null || productDTO.Stock < 0 || productDTO.Price < 0)
+            {
+                _response.Message = "Parameters are invalid";
+                _response.StatusCode = HttpStatusCode.BadRequest;
+                return BadRequest(_response);
+            }
+            string[] categories = ["", "Men", "Women", "Children", "Sports", "Graphic"];
+            string[] sizes = ["", "S", "M", "L", "XL", "XXL"];
+            string[] colors = ["", "Red", "Blue", "Yellow", "Black", "White"];
+            try
+            {
+                for (int cat = 0; cat < productDTO.Categories.Length; ++cat)
+                {
+                    for (int s = 0; s < productDTO.Sizes.Length; ++s)
+                    {
+                        for (int c = 0; c < productDTO.Colors.Length; ++c)
+                        {
+                            string name = $"{categories[(int)productDTO.Categories[cat]]} " +
+                                $"{sizes[(int)productDTO.Sizes[s]]} " + $"{colors[(int)productDTO.Colors[c]]}";
+                            Product? product = await _db.Products.SingleOrDefaultAsync((p) => p.Name == name);
+
+                            if(product == null)
+                            {
+                                _response.Message += $"{name} is an invalid product name\n";
+                            }
+                            else
+                            {
+                                int stock = productDTO.IsAdd ? product.Stock + productDTO.Stock : product.Stock - productDTO.Stock;
+                                if(stock < 0)
+                                {
+                                    _response.Message += $"Invalid stock update for {name}";
+                                }
+                                else
+                                {
+                                    product.Stock = stock;
+                                    product.Price = productDTO.Price;
+                                    _db.Products.Update(product);
+                                }
+                            }
+
+                        }
+                    }
+                }
+                _response.Message += "Update successfull";
+                _response.IsSuccess = true;
+                _response.StatusCode = HttpStatusCode.OK;
+                await _db.SaveChangesAsync();
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.Message = ex.Message;
+                _response.StatusCode = HttpStatusCode.BadRequest;
                 return BadRequest(_response);
             }
         }
