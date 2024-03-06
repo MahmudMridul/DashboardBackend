@@ -78,7 +78,7 @@ namespace DashboardBackend.Controllers
             }
             string[] categories = ["", "Men", "Women", "Children", "Sports", "Graphic"];
             string[] sizes = ["", "S", "M", "L", "XL", "XXL"];
-            string[] colors = ["", "Red", "Blue", "Yellow", "Black", "White"];
+            string[] colors = ["", "Red", "Blue", "Green", "Yellow", "Black", "White"];
             try
             {
                 for (int cat = 0; cat < productDTO.Categories.Length; ++cat)
